@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<title>Mao Yu's kitchen - Cross platform C signals</title>
+	<link rel="stylesheet" type="text/css" href="/css/base.css" media="screen" />
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+	<meta name="description" content="It's always a good idea to handle Ctrl-C events with a custom function to perform any necessary cleanup, this shows handling Ctrl-C events in Win32 and POSIX console" />
+	<meta name="keywords" content="win32api, c programming, console programming" />
+	<meta name="robots" content="index, follow" />
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+<div id="header">
+	<ul>
+		
+		<li><a href="/" >Home</a></li>
+		
+			<li><a href="/projects/"
+			>Projects</a></li>
+		
+			<li><a href="/resources/"
+			>Resources</a></li>
+		
+			<li><a href="/notes/"
+			 class="active">Notes</a></li>
+		
+	</ul>
+	<a href="/"><img src="/images/logo.png" alt="Logo" id="logo"/></a>
+	<h1>Mao Yu</h1>
+	<span id="slogan">Casual code cook...</span>
+</div>
+
+
+<div class="colmask fullpage">
+	<div class="col1_onecol">
+		<h2>Cross platform C signals</h2>
+		<p>It's always a good idea to handle Ctrl-C events with a custom function to perform any necessary cleanup, this shows handling Ctrl-C events in Win32 and POSIX console</p>
+		<p>Linux programmers are quite familiar with the <code>sys/signal.h</code> way of
+handling Ctrl-C events, such as this snippet:</p>
+
+<div class="highlight"><pre><span class="cp">#include &lt;sys/signal.h&gt;</span>
+<span class="p">...</span>
+<span class="k">static</span> <span class="k">volatile</span> <span class="kt">sig_atomic_t</span> <span class="n">exiting</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="cm">/* Signal handler for exit signals */</span>
+<span class="k">static</span> <span class="kt">void</span>
+<span class="nf">sigexit</span><span class="p">(</span><span class="kt">int</span> <span class="n">signo</span><span class="p">)</span>
+<span class="p">{</span><span class="n">exiting</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;}</span>
+<span class="cm">/* Register signal handler */</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="n">sig_register</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="k">struct</span> <span class="n">sigaction</span> <span class="n">sigact</span><span class="p">;</span>
+    <span class="n">sigact</span><span class="p">.</span><span class="n">sa_handler</span> <span class="o">=</span> <span class="n">sigexit</span><span class="p">;</span>
+    <span class="n">sigemptyset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sigact</span><span class="p">.</span><span class="n">sa_mask</span><span class="p">);</span>
+    <span class="n">sigact</span><span class="p">.</span><span class="n">sa_flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">sigaction</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sigact</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+    <span class="n">sigaction</span><span class="p">(</span><span class="n">SIGTERM</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sigact</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Which creates a simple handler for SIGINT and SIGTERM that sets the value of the
+global variable 'exiting' to 1 on Ctrl-C events.</p>
+
+<p>While Win32 doesn't support signal handling the POSIX way, you can make it cross platform with the corresponding Win32 version using the function <code>SetConsoleCtrlHandler</code>:</p>
+
+<div class="highlight"><pre><span class="cp">#include &lt;windows.h&gt;</span>
+<span class="p">...</span>
+<span class="k">static</span> <span class="kt">int</span> <span class="n">exiting</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="cm">/* Signal handler for exit signals */</span>
+<span class="n">BOOL</span> <span class="n">CtrlHandler</span><span class="p">(</span> <span class="n">DWORD</span> <span class="n">fdwCtrlType</span> <span class="p">){</span>
+    <span class="k">switch</span><span class="p">(</span> <span class="n">fdwCtrlType</span> <span class="p">){</span>
+    <span class="k">case</span> <span class="n">CTRL_C_EVENT</span>:
+        <span class="n">exiting</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">(</span> <span class="n">TRUE</span> <span class="p">);</span>
+    <span class="c1">// CTRL-CLOSE: confirm that the user wants to exit.</span>
+    <span class="k">case</span> <span class="n">CTRL_CLOSE_EVENT</span>:
+        <span class="n">exiting</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">(</span> <span class="n">TRUE</span> <span class="p">);</span>
+    <span class="c1">// Pass other signals to the next handler.</span>
+    <span class="k">case</span> <span class="n">CTRL_BREAK_EVENT</span>:
+        <span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">CTRL_LOGOFF_EVENT</span>:
+        <span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">CTRL_SHUTDOWN_EVENT</span>:
+        <span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+    <span class="nl">default:</span>
+        <span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="cm">/* Register signal handler */</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="n">sig_register</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">SetConsoleCtrlHandler</span><span class="p">(</span> <span class="p">(</span><span class="n">PHANDLER_ROUTINE</span><span class="p">)</span> <span class="n">CtrlHandler</span><span class="p">,</span> <span class="n">TRUE</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Unable to register Control Handler.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Note that by returning true, you're telling the windows that you've handled the event, and the default handler (usually 'exit') will not be called.</p>
+
+<h3>References</h3>
+
+<ol>
+<li><a href="http://opengroup.org/onlinepubs/007908775/xsh/sigaction.html">Sigaction on opengroup</a></li>
+<li><a href="http://msdn.microsoft.com/en-us/library/ms686016(VS.85).aspx">SetConsoleCtrlHandler on MSDN</a></li>
+</ol>
+
+	</div>
+</div>
+	<div id="footer">
+		<p>Statically generated by <a href="http://nanoc.stoneship.org/">Nanoc</a></p>
+	</div>
+	<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-17478090-1']);
+	_gaq.push(['_trackPageview']);
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ?
+			  'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+</body>
+</html>
+
+
+
