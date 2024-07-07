@@ -1,6 +1,7 @@
 baseURL = 'https://www.maoserr.com/'
 languageCode = 'en-us'
-title = 'Maoserr Personal Site'
+title = '@Maoserr'
+paginate = 3
 theme = 'hugotex'
 DefaultContentLanguage = "en"
 enableInlineShortcodes = true
@@ -9,7 +10,7 @@ footnoteReturnLinkContents = "^"
 [Params.Author]
 name = "Mao Yu"
 abstract = """
-  Casual code cook.
+  Casual code cook. There's nothing to see here.
   """
 
 [taxonomies]
