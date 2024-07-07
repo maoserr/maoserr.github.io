@@ -7,11 +7,25 @@ DefaultContentLanguage = "en"
 enableInlineShortcodes = true
 footnoteReturnLinkContents = "^"
 
+[Params]
+darkmode = true
+
 [Params.Author]
 name = "Mao Yu"
 abstract = """
   Casual code cook. There's nothing to see here.
   """
+
+[Params.logo]
+url="logo.png"
+width=60
+height=70
+alt="Logo"
+
+[[Params.nav]]
+name="About"
+url="about"
+
 
 [taxonomies]
 category = "categories"
@@ -25,5 +39,3 @@ unsafe = true
 [markup.highlight]
 style = "paraiso-dark" # syntax highlighting style
 
-[Params]
-darkmode = true
