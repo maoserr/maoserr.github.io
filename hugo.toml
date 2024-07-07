@@ -26,6 +26,10 @@ alt="Logo"
 name="About"
 url="about"
 
+[[Params.nav]]
+name="Github"
+url="https://github.com/maoserr"
+
 
 [taxonomies]
 category = "categories"
