@@ -1,45 +1,39 @@
 baseURL = 'https://www.maoserr.com/'
-languageCode = 'en-us'
 title = '@Maoserr'
-paginate = 3
-theme = 'hugotex'
-DefaultContentLanguage = "en"
-enableInlineShortcodes = true
-footnoteReturnLinkContents = "^"
+author = "Mao Yu"
+copyright = "Mao Yu"
+paginate = 10
+languageCode = "en"
+theme = "tailwind"
 
-[Params]
-darkmode = true
+[params]
+# dir name of your blog content (default is `content/posts`).
+# the list of set content will show up on your index page (baseurl).
+contentTypeName = "post"
 
-[Params.Author]
-name = "Mao Yu"
-abstract = """
-  Casual code cook. There's nothing to see here.
-  """
+[params.header]
+logo = "images/logo.png"
 
-[Params.logo]
-url="logo.png"
-width=60
-height=70
-alt="Logo"
+[params.footer]
+since = 2023
+poweredby = false
 
-[[Params.nav]]
-name="About"
-url="about"
+[menu]
+[[menu.main]]
+identifier = "post"
+name = "Post"
+pageRef = "/post"
+weight = 0
 
-[[Params.nav]]
-name="Github"
-url="https://github.com/maoserr"
-
+[[menu.main]]
+identifier = "about"
+name = "About"
+pageRef = "/about"
+weight = 10
 
 [taxonomies]
 category = "categories"
 tag = "tags"
 series = "series"
 
-[markup]
-[markup.goldmark]
-[markup.goldmark.renderer]
-unsafe = true
-[markup.highlight]
-style = "paraiso-dark" # syntax highlighting style
 
