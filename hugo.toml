@@ -18,18 +18,26 @@ logo = "images/logo.png"
 since = 2023
 poweredby = false
 
+[[menu.main]]
+identifier = "proja"
+name = "Project A"
+URL = "https://maoserr.com/project_a_release"
+weight = 1
+
 [menu]
 [[menu.main]]
 identifier = "post"
 name = "Post"
 pageRef = "/post"
-weight = 0
+weight = 2
 
 [[menu.main]]
 identifier = "about"
 name = "About"
 pageRef = "/about"
-weight = 10
+weight = 0
+
+
 
 [taxonomies]
 category = "categories"
