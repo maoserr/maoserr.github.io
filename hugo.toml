@@ -1,5 +1,6 @@
 baseURL = 'https://www.maoserr.com/'
 title = '@Maoserr'
+
 author = "Mao Yu"
 copyright = "Mao Yu"
 paginate = 10
@@ -10,10 +11,23 @@ theme = "tailwind"
 # dir name of your blog content (default is `content/posts`).
 # the list of set content will show up on your index page (baseurl).
 contentTypeName = "post"
+subtitle = 'Casual Code'
 
 [params.header]
 logo = "images/logo.png"
 
+[params.giscus]
+enabled = true
+repo = "maoserr/maoserr.github.io"
+repoID = "MDEwOlJlcG9zaXRvcnkyMDI1NDQxNQ=="
+category = "Announcements"
+categoryID = "DIC_kwDOATUOz84Cnh54"
+mapping = "pathname"
+strict = "0"
+reactionsEnabled = "1"
+emitMetadata = "0"
+inputPosition = "top"
+lang = "en"
 
 [[params.social_media.items]]
 enabled = true
